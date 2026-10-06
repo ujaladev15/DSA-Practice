@@ -1,0 +1,30 @@
+import heapq
+
+class Solution(object):
+    def mergeKLists(self, lists):
+        """
+        :type lists: List[Optional[ListNode]]
+        :rtype: Optional[ListNode]
+        """
+        heap = []
+
+        # Put first node of every list into heap
+        for i, node in enumerate(lists):
+            if node:
+                heapq.heappush(heap, (node.val, i, node))
+
+        dummy = ListNode(0)
+        curr = dummy
+
+        while heap:
+            val, i, node = heapq.heappop(heap)
+
+            curr.next = node
+            curr = curr.next
+
+            # Add next node from the same list
+            if node.next:
+                heapq.heappush(heap, (node.next.val, i, node.next))
+
+        return dummy.next
+        
