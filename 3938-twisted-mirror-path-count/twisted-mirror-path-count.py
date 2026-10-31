@@ -1,0 +1,52 @@
+class Solution(object):
+    def uniquePaths(self, grid):
+        MOD = 10**9 + 7
+        m, n = len(grid), len(grid[0])
+
+        # right[i][j] = ways entering (i,j) while moving right
+        # down[i][j]  = ways entering (i,j) while moving down
+        right = [[0] * n for _ in range(m)]
+        down = [[0] * n for _ in range(m)]
+
+        # From (0,0), we can start by going right or down.
+        if n > 1:
+            right[0][1] = 1
+        if m > 1:
+            down[1][0] = 1
+
+        for i in range(m):
+            for j in range(n):
+                if i == 0 and j == 0:
+                    continue
+
+                r = right[i][j]
+                d = down[i][j]
+
+                if grid[i][j] == 1:
+                    # Entered mirror from the left -> turn DOWN
+                    if r and i + 1 < m:
+                        down[i + 1][j] = (
+                            down[i + 1][j] + r
+                        ) % MOD
+
+                    # Entered mirror from above -> turn RIGHT
+                    if d and j + 1 < n:
+                        right[i][j + 1] = (
+                            right[i][j + 1] + d
+                        ) % MOD
+
+                else:
+                    # Normal cell: continue right/down
+                    ways = (r + d) % MOD
+
+                    if j + 1 < n:
+                        right[i][j + 1] = (
+                            right[i][j + 1] + ways
+                        ) % MOD
+
+                    if i + 1 < m:
+                        down[i + 1][j] = (
+                            down[i + 1][j] + ways
+                        ) % MOD
+
+        return (right[m - 1][n - 1] + down[m - 1][n - 1]) % MOD
